@@ -1,8 +1,7 @@
 package net.jmp.spring.boot.cleaners.classes;
 
 /*
- * (#)Room.java  0.2.0   01/15/2025
- * (#)Room.java  0.1.0   01/15/2025
+ * (#)ThreadRunner.java 0.2.0   01/15/2025
  *
  * @author   Jonathan Parker
  *
@@ -30,39 +29,42 @@ package net.jmp.spring.boot.cleaners.classes;
  */
 
 import java.lang.ref.Cleaner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static net.jmp.util.logging.LoggerUtils.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/// The room class.
+/// The thread runner class.
 ///
 /// @version    0.2.0
-/// @since      0.1.0
-public final class Room implements AutoCloseable{
+/// @since      0.2.0
+public final class ThreadRunner implements AutoCloseable {
+    /// The default number of threads.
+    private static final int DEFAULT_NUMBER_OF_THREADS = Runtime.getRuntime().availableProcessors();
+
+    /// The logger.
+    private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+
     /// The cleaner. One cleaner can manage multiple items.
     private static final Cleaner cleaner = Cleaner.create();
 
     /// The resource(s) that require cleanup.
-    /// This state class must never refer to Room.
-    private static class RoomState implements Runnable {
+    /// This state class must never refer to ThreadRunner.
+    private static class State implements Runnable {
         /// The logger.
         private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-        /// The name of the room.
-        private final String name;
-
-        /// The number of junk piles that need to be cleaned up.
-        private int numberOfJunkPiles;
+        /// The executor service which must be closed.
+        private final ExecutorService executorService;
 
         /// The constructor.
         ///
-        /// @param  name                java.lang.String
-        /// @param  numberOfJunkPiles   int
-        private RoomState(final String name, final int numberOfJunkPiles) {
-            this.name = name;
-            this.numberOfJunkPiles = numberOfJunkPiles;
+        /// @param  executorService java.util.concurrent.ExecutorService
+        private State(final ExecutorService executorService) {
+            this.executorService = executorService;
         }
 
         /// The run method.  This method
@@ -75,11 +77,17 @@ public final class Room implements AutoCloseable{
                 this.logger.trace(entry());
             }
 
-            final int pilesToClean = this.numberOfJunkPiles;
+            if (!this.executorService.isShutdown()) {
+                this.executorService.shutdown();
 
-            this.numberOfJunkPiles = 0;     // The cleaning action
+                this.logger.info("The executor service has been shut down");
 
-            this.logger.info("{}'s room had {} junk piles and now has been cleaned", this.name, pilesToClean);
+                if (this.executorService.isTerminated()) {
+                    this.logger.info("The executor service has been terminated");
+                }
+            } else {
+                this.logger.info("The executor service has already been shut down");
+            }
 
             if (this.logger.isTraceEnabled()) {
                 this.logger.trace(exit());
@@ -87,33 +95,34 @@ public final class Room implements AutoCloseable{
         }
     }
 
-    /// The state of the room that requires cleanup.
-    private final RoomState roomState;
+    /// The state.
+    private final State state;
 
-    /// The cleanable. Cleans the room when the room has become phantom reachable.
+    /// The cleanable. Cleans up when the thread runner has become phantom reachable.
     private final Cleaner.Cleanable cleanable;
 
-    /// The constructor.
-    ///
-    /// @param   name               java.lang.String
-    /// @param   numberOfJunkPiles  int
-    public Room(final String name, final int numberOfJunkPiles) {
-        this.roomState = new RoomState(name, numberOfJunkPiles);
-        this.cleanable = cleaner.register(this, this.roomState);
+    /// The default constructor.
+    public ThreadRunner() {
+        this.state = new State(Executors.newFixedThreadPool(DEFAULT_NUMBER_OF_THREADS));
+        this.cleanable = cleaner.register(this, this.state);
     }
 
-    /// Return the number of junk piles.
-    ///
-    /// @return int
-    public int getNumberOfJunkPiles() {
-        return this.roomState.numberOfJunkPiles;
+    /// Runs threads.
+    public void runThreads() {
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(entry());
+        }
+
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(exit());
+        }
     }
 
-    /// Return the name of the room.
+    /// Return the executor service.
     ///
-    /// @return java.lang.String
-    public String getName() {
-        return this.roomState.name;
+    /// @return java.util.concurrent.ExecutorService
+    public ExecutorService getExecutorService() {
+        return this.state.executorService;
     }
 
     /// The close method.

@@ -1,8 +1,7 @@
-package net.jmp.spring.boot.cleaners;
+package net.jmp.spring.boot.cleaners.services;
 
 /*
- * (#)Main.java 0.2.0   01/15/2025
- * (#)Main.java 0.1.0   01/15/2025
+ * (#)ThreadRunnerService.java  0.2.0   01/15/2025
  *
  * @author   Jonathan Parker
  *
@@ -29,65 +28,58 @@ package net.jmp.spring.boot.cleaners;
  * SOFTWARE.
  */
 
-import net.jmp.spring.boot.cleaners.services.*;
+import net.jmp.spring.boot.cleaners.classes.ThreadRunner;
 
-import static net.jmp.util.logging.LoggerUtils.entry;
-import static net.jmp.util.logging.LoggerUtils.exit;
+import static net.jmp.util.logging.LoggerUtils.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Service;
 
-import org.springframework.stereotype.Component;
-
-/// The main application class.
+/// The thread service.
 ///
 /// @version    0.2.0
-/// @since      0.1.0
-@Component
-public class Main implements Runnable {
+/// @since      0.2.0
+@Service
+public class ThreadRunnerService implements ServiceRunner {
     /// The logger.
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-    /// The environment.
-    private final Environment environment;
-
-    /// The room service.
-    private final RoomService roomService;
-
-    /// The thread runner service.
-    private final ThreadRunnerService threadRunnerService;
-
-    /// The constructor.
-    ///
-    /// @param  environment         org.springframework.core.env.Environment
-    /// @param  roomService         net.jmp.spring.boot.cleaners.services.RoomService
-    /// @param  threadRunnerService net.jmp.spring.boot.cleaners.services.ThreadRunnerService
-    public Main(final Environment environment,
-                final RoomService roomService,
-                final ThreadRunnerService threadRunnerService) {
+    /// The default constructor.
+    public ThreadRunnerService() {
         super();
-
-        this.environment = environment;
-        this.roomService = roomService;
-        this.threadRunnerService = threadRunnerService;
     }
 
-    ///
-    /// The run method.
+    /// Runs the service.
     @Override
-    public void run() {
+    public void runService() {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entry());
         }
 
-        if (this.logger.isInfoEnabled()) {
-            this.logger.info("Hello from: {}", this.environment.getProperty("spring.application.name"));
-        }
+        // No explicit or implicit close
 
-        this.roomService.runService();
-        this.threadRunnerService.runService();
+        ThreadRunner threadRunner1 = new ThreadRunner();
+
+        threadRunner1.runThreads();
+
+        threadRunner1 = null;
+
+        System.gc();
+
+        // Use an explicit close
+
+        final ThreadRunner threadRunner2 = new ThreadRunner();
+
+        threadRunner2.runThreads();
+        threadRunner2.close();
+
+        // Use an implicit close
+
+        try (final ThreadRunner threadRunner3 = new ThreadRunner()) {
+            threadRunner3.runThreads();
+        }
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
