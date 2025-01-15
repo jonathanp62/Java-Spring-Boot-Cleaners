@@ -1,0 +1,16 @@
+Spring-Boot-Cleaners
+--------------------
+
+A program that demonstrates using reference cleaners from a Spring Boot application
+
+Gradle JavaExec Tasks
+~~~~~~~~~~~~~~~~~~~~~
+
+[options="header"]
+|=======================
+|Task Name              |Application Invocation
+|bootRun                |No arguments
+|=======================
+
+Current version: 0.1.0.
+~~~~~~~~~~~~~~~~~~~~~~~
