@@ -94,7 +94,7 @@ public final class Room implements AutoCloseable{
     /// @param   numberOfJunkPiles  int
     public Room(final String name, final int numberOfJunkPiles) {
         this.roomState = new RoomState(name, numberOfJunkPiles);
-        this.cleanable = cleaner.register(this, roomState);
+        this.cleanable = cleaner.register(this, this.roomState);
     }
 
     /// Return the number of junk piles.
