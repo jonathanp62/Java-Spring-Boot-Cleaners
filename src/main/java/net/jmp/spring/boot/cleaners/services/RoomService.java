@@ -53,6 +53,8 @@ public class RoomService implements ServiceRunner {
             this.logger.trace(entry());
         }
 
+        // The try-with-resources invokes the close method on Room
+
         try (final Room myRoom = new Room("Jonathan", 2)) {
             if (this.logger.isInfoEnabled()) {
                 this.logger.info("{}'s room has {} junk piles in it", myRoom.getName(), myRoom.getNumberOfJunkPiles());
@@ -66,6 +68,9 @@ public class RoomService implements ServiceRunner {
         }
 
         herRoom = null; // In conjunction with garbage collection
+
+        // Garbage collection will cause the reference to herRoom to become phantom reachable
+        // Then the close method on Room will be invoked by the cleanable
 
         System.gc();
 
