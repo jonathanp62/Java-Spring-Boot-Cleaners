@@ -12,5 +12,5 @@ Gradle JavaExec Tasks
 |bootRun                |No arguments
 |=======================
 
-Current version: 0.1.0.
+Current version: 0.2.0.
 ~~~~~~~~~~~~~~~~~~~~~~~

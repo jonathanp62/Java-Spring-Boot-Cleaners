@@ -1,8 +1,9 @@
 /*
+ * (#)build.gradle  0.2.0   01/15/2025
  * (#)build.gradle  0.1.0   01/15/2025
  *
  * @author   Jonathan Parker
- * @version  0.1.0
+ * @version  0.2.0
  * @since    0.1.0
  *
  * MIT License
@@ -41,7 +42,7 @@ plugins {
 }
 
 group = 'net.jmp.spring.boot.cleaners'
-version = '0.1.0'
+version = '0.2.0'
 description = 'Spring-Boot-Cleaners'
 
 println "The groupId is ${project.group}"
