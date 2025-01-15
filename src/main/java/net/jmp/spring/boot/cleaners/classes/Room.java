@@ -1,6 +1,7 @@
 package net.jmp.spring.boot.cleaners.classes;
 
 /*
+ * (#)Room.java  0.2.0   01/15/2025
  * (#)Room.java  0.1.0   01/15/2025
  *
  * @author   Jonathan Parker
@@ -35,6 +36,10 @@ import static net.jmp.util.logging.LoggerUtils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/// The room class.
+///
+/// @version    0.2.0
+/// @since      0.1.0
 public final class Room implements AutoCloseable{
     /// The cleaner. One cleaner can manage multiple items.
     private static final Cleaner cleaner = Cleaner.create();

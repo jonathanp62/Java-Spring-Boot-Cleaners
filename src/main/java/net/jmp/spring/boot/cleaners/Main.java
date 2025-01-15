@@ -1,6 +1,7 @@
 package net.jmp.spring.boot.cleaners;
 
 /*
+ * (#)Main.java 0.2.0   01/15/2025
  * (#)Main.java 0.1.0   01/15/2025
  *
  * @author   Jonathan Parker
@@ -41,7 +42,7 @@ import org.springframework.stereotype.Component;
 
 /// The main application class.
 ///
-/// @version    0.1.0
+/// @version    0.2.0
 /// @since      0.1.0
 @Component
 public class Main implements Runnable {
@@ -57,6 +58,7 @@ public class Main implements Runnable {
     /// The constructor.
     ///
     /// @param  environment org.springframework.core.env.Environment
+    /// @param  roomService net.jmp.spring.boot.cleaners.services.RoomService
     public Main(final Environment environment, final RoomService roomService) {
         super();
 

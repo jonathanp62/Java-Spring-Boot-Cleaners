@@ -46,6 +46,11 @@ public class RoomService implements ServiceRunner {
     /// The logger.
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
+    /// The default constructor.
+    public RoomService() {
+        super();
+    }
+
     /// Runs the service.
     @Override
     public void runService() {
