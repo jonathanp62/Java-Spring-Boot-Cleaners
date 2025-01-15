@@ -39,8 +39,8 @@ public final class Room implements AutoCloseable{
     /// The cleaner. One cleaner can manage multiple items.
     private static final Cleaner cleaner = Cleaner.create();
 
-    /// The resource that requires cleanup.
-    /// It must never refer to Room.
+    /// The resource(s) that require cleanup.
+    /// This state class must never refer to Room.
     private static class RoomState implements Runnable {
         /// The logger.
         private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());

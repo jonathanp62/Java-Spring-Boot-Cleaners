@@ -61,13 +61,25 @@ public class RoomService implements ServiceRunner {
             }
         }
 
+        // Using an explicit close
+
+        final Room garage = new Room("Garage", 12);
+
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info("{}'s room has {} junk piles in it", garage.getName(), garage.getNumberOfJunkPiles());
+        }
+
+        garage.close();
+
+        // Not using try-with-resources or an explicit close
+
         Room herRoom = new Room("Dena", 5);
 
         if (this.logger.isInfoEnabled()) {
             this.logger.info("{}'s room has {} junk piles in it", herRoom.getName(), herRoom.getNumberOfJunkPiles());
         }
 
-        herRoom = null; // In conjunction with garbage collection
+        herRoom = null; // Abandon the reference in anticipation of garbage collection
 
         // Garbage collection will cause the reference to herRoom to become phantom reachable
         // Then the close method on Room will be invoked by the cleanable
