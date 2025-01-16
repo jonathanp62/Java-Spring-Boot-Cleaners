@@ -29,6 +29,8 @@ package net.jmp.spring.boot.cleaners;
  * SOFTWARE.
  */
 
+import net.jmp.spring.boot.cleaners.classes.Person;
+
 import net.jmp.spring.boot.cleaners.services.*;
 
 import static net.jmp.util.logging.LoggerUtils.entry;
@@ -36,6 +38,8 @@ import static net.jmp.util.logging.LoggerUtils.exit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.springframework.context.ApplicationContext;
 
 import org.springframework.core.env.Environment;
 
@@ -50,6 +54,9 @@ public class Main implements Runnable {
     /// The logger.
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
+    /// The application context.
+    private final ApplicationContext applicationContext;
+
     /// The environment.
     private final Environment environment;
 
@@ -61,14 +68,17 @@ public class Main implements Runnable {
 
     /// The constructor.
     ///
+    /// @param  applicationContext  org.springframework.context.ApplicationContext
     /// @param  environment         org.springframework.core.env.Environment
     /// @param  roomService         net.jmp.spring.boot.cleaners.services.RoomService
     /// @param  threadRunnerService net.jmp.spring.boot.cleaners.services.ThreadRunnerService
-    public Main(final Environment environment,
+    public Main(final ApplicationContext applicationContext,
+                final Environment environment,
                 final RoomService roomService,
                 final ThreadRunnerService threadRunnerService) {
         super();
 
+        this.applicationContext = applicationContext;
         this.environment = environment;
         this.roomService = roomService;
         this.threadRunnerService = threadRunnerService;
@@ -88,8 +98,23 @@ public class Main implements Runnable {
                     this.environment.getProperty("spring.application.version"));
         }
 
+        // Run the services
+
         this.roomService.runService();
         this.threadRunnerService.runService();
+
+        // Work with prototype-scoped beans
+
+        final Person john = this.applicationContext.getBean(Person.class);
+        final Person jane = this.applicationContext.getBean(Person.class);
+
+        john.setAge(19);
+        john.setName("John");
+        jane.setAge(22);
+        jane.setName("Jane");
+
+        this.logger.info("{} is {} years old", john.getName(), john.getAge());
+        this.logger.info("{} is {} years old", jane.getName(), jane.getAge());
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());

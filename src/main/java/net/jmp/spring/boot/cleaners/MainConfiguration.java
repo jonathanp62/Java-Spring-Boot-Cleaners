@@ -1,9 +1,9 @@
-package net.jmp.spring.boot.cleaners.components;
+package net.jmp.spring.boot.cleaners;
 
 /*
- * (#)ResourceCleaner.java  0.2.0   01/16/2025
+ * (#)MainConfiguration.java    0.2.0   01/16/2025
  *
- * @author    Jonathan Parker
+ * @author   Jonathan Parker
  *
  * MIT License
  *
@@ -28,28 +28,32 @@ package net.jmp.spring.boot.cleaners.components;
  * SOFTWARE.
  */
 
-import org.springframework.stereotype.Component;
+import net.jmp.spring.boot.cleaners.classes.*;
 
-import java.lang.ref.Cleaner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 
-/// The resource cleaner.
+/// The main configuration class.
 ///
-/// @version 0.2.0
-/// @since   0.2.0
-@Component
-public class ResourceCleaner {
-    /// The cleaner.
-    private static final Cleaner cleaner = Cleaner.create();
-
+/// @version    0.2.0
+/// @since      0.2.0
+@Configuration
+public class MainConfiguration {
     /// The default constructor.
-    public ResourceCleaner() {
+    MainConfiguration() {
         super();
     }
 
-    /// Retrieves the cleaner object.
+
+    /// The person bean. The prototype
+    /// scope instructs Spring to make
+    /// a new instance for each request.
     ///
-    /// @return java.lang.ref.Cleaner
-    public Cleaner getCleaner() {
-        return cleaner;
+    /// @return net.jmp.spring.boot.cleaners.classes.Person
+    @Bean
+    @Scope("prototype")
+    Person person() {
+        return new Person();
     }
 }

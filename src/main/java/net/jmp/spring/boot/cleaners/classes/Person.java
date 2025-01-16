@@ -1,9 +1,9 @@
-package net.jmp.spring.boot.cleaners.components;
+package net.jmp.spring.boot.cleaners.classes;
 
 /*
- * (#)ResourceCleaner.java  0.2.0   01/16/2025
+ * (#)Person.java   0.2.0   01/16/2025
  *
- * @author    Jonathan Parker
+ * @author   Jonathan Parker
  *
  * MIT License
  *
@@ -28,28 +28,58 @@ package net.jmp.spring.boot.cleaners.components;
  * SOFTWARE.
  */
 
-import org.springframework.stereotype.Component;
-
-import java.lang.ref.Cleaner;
-
-/// The resource cleaner.
+/// The person class.
 ///
-/// @version 0.2.0
-/// @since   0.2.0
-@Component
-public class ResourceCleaner {
-    /// The cleaner.
-    private static final Cleaner cleaner = Cleaner.create();
+/// @version    0.2.0
+/// @since      0.2.0
+public class Person {
+    /// The name of the person.
+    private String name;
+
+    /// The age of the person.
+    private int age;
 
     /// The default constructor.
-    public ResourceCleaner() {
+    public Person() {
         super();
     }
 
-    /// Retrieves the cleaner object.
+    /// Return the name of the person.
     ///
-    /// @return java.lang.ref.Cleaner
-    public Cleaner getCleaner() {
-        return cleaner;
+    /// @return java.lang.String
+    public String getName() {
+        return this.name;
+    }
+
+    /// Set the name of the person.
+    ///
+    /// @param  name    java.lang.String
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    /// Return the age of the person.
+    ///
+    /// @return int
+    public int getAge() {
+        return this.age;
+    }
+
+    /// Set the age of the person.
+    ///
+    /// @param  age int
+    public void setAge(final int age) {
+        this.age = age;
+    }
+
+    /// Return a string that represents the person.
+    ///
+    /// @return java.lang.String
+    @Override
+    public String toString() {
+        return "Person{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                '}';
     }
 }
