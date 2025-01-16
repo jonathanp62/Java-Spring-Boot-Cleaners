@@ -30,8 +30,12 @@ package net.jmp.spring.boot.cleaners.classes;
 
 import java.lang.ref.Cleaner;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.ArrayList;
+import java.util.List;
+
+import java.util.concurrent.*;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import net.jmp.spring.boot.cleaners.components.ResourceCleaner;
 
@@ -85,7 +89,21 @@ public final class ThreadRunner implements AutoCloseable {
                 this.logger.info("The executor service has been shut down");
 
                 if (this.executorService.isTerminated()) {
-                    this.logger.info("The executor service has been terminated");
+                    this.logger.info("The executor service has already been terminated");
+                } else {
+                    // Await termination must be done after shutdown
+
+                    try {
+                        final boolean result = this.executorService.awaitTermination(2, TimeUnit.SECONDS);
+
+                        if (result) {
+                            this.logger.info("The executor service has been terminated");
+                        } else {
+                            this.logger.warn("The executor service has not been terminated");
+                        }
+                    } catch (InterruptedException _) {
+                        Thread.currentThread().interrupt();
+                    }
                 }
             } else {
                 this.logger.info("The executor service has already been shut down");
@@ -130,6 +148,31 @@ public final class ThreadRunner implements AutoCloseable {
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(entry());
         }
+
+        final List<Future<String>> futures = new ArrayList<>();
+        final AtomicInteger counter = new AtomicInteger(0);
+
+        for (int i = 0; i < DEFAULT_NUMBER_OF_THREADS; i++) {
+            final int j = counter.incrementAndGet();
+            final Future<String> future = this.state.executorService.submit(
+                    () -> this.logger.info("Thread {} is running: {}", Thread.currentThread().getName(), j),
+                    Thread.currentThread().getName() + ": " + j
+            );
+
+            futures.add(future);
+        }
+
+        futures.forEach(future -> {
+            try {
+                this.logger.info("Future returned: {}", future.get());
+            } catch (final InterruptedException | ExecutionException e) {
+                this.logger.error(catching(e));
+
+                if (e instanceof InterruptedException) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        });
 
         if (this.logger.isTraceEnabled()) {
             this.logger.trace(exit());
