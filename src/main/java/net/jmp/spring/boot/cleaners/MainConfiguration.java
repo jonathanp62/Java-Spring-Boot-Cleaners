@@ -45,7 +45,6 @@ public class MainConfiguration {
         super();
     }
 
-
     /// The person bean. The prototype
     /// scope instructs Spring to make
     /// a new instance for each request.
@@ -55,5 +54,27 @@ public class MainConfiguration {
     @Scope("prototype")
     Person person() {
         return new Person();
+    }
+
+    /// The room bean. The prototype
+    /// scope instructs Spring to make
+    /// a new instance for each request.
+    ///
+    /// @return net.jmp.spring.boot.cleaners.classes.Room
+    @Bean
+    @Scope("prototype")
+    Room room() {
+        return new Room();
+    }
+
+    /// The room bean. The prototype
+    /// scope instructs Spring to make
+    /// a new instance for each request.
+    ///
+    /// @return net.jmp.spring.boot.cleaners.classes.ThreadRunner
+    @Bean
+    @Scope("prototype")
+    ThreadRunner threadRunner() {
+        return new ThreadRunner();
     }
 }

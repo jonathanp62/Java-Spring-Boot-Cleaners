@@ -30,12 +30,12 @@ package net.jmp.spring.boot.cleaners.services;
 
 import net.jmp.spring.boot.cleaners.classes.ThreadRunner;
 
-import net.jmp.spring.boot.cleaners.components.ResourceCleaner;
-
 import static net.jmp.util.logging.LoggerUtils.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.springframework.context.ApplicationContext;
 
 import org.springframework.stereotype.Service;
 
@@ -50,16 +50,16 @@ public class ThreadRunnerService implements ServiceRunner {
     /// The logger.
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-    /// The resource cleaner component.
-    private final ResourceCleaner resourceCleaner;
+    /// The application context.
+    private final ApplicationContext applicationContext;
 
     /// The constructor.
     ///
-    /// @param  resourceCleaner net.jmp.spring.boot.cleaners.components.ResourceCleaner
-    public ThreadRunnerService(final ResourceCleaner resourceCleaner) {
+    /// @param  applicationContext    org.springframework.context.ApplicationContext
+    public ThreadRunnerService(final ApplicationContext applicationContext) {
         super();
 
-        this.resourceCleaner = resourceCleaner;
+        this.applicationContext = applicationContext;
     }
 
     /// Runs the service.
@@ -71,8 +71,9 @@ public class ThreadRunnerService implements ServiceRunner {
 
         // No explicit or implicit close
 
-        ThreadRunner threadRunner1 = new ThreadRunner(this.resourceCleaner);
+        ThreadRunner threadRunner1 = this.applicationContext.getBean(ThreadRunner.class);
 
+        threadRunner1.setup();
         threadRunner1.runThreads();
 
         threadRunner1 = null;
@@ -81,14 +82,16 @@ public class ThreadRunnerService implements ServiceRunner {
 
         // Use an explicit close
 
-        final ThreadRunner threadRunner2 = new ThreadRunner(this.resourceCleaner);
+        final ThreadRunner threadRunner2 = this.applicationContext.getBean(ThreadRunner.class);
 
+        threadRunner2.setup();
         threadRunner2.runThreads();
         threadRunner2.close();
 
         // Use an implicit close
 
-        try (final ThreadRunner threadRunner3 = new ThreadRunner(this.resourceCleaner)) {
+        try (final ThreadRunner threadRunner3 = this.applicationContext.getBean(ThreadRunner.class)) {
+            threadRunner3.setup();
             threadRunner3.runThreads();
         }
 

@@ -38,6 +38,8 @@ import static net.jmp.util.logging.LoggerUtils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 /// The room class.
 ///
 /// @version    0.2.0
@@ -86,20 +88,30 @@ public final class Room implements AutoCloseable{
         }
     }
 
+    /// The resource cleaner.
+    @Autowired
+    private ResourceCleaner resourceCleaner;
+
     /// The state of the room that requires cleanup.
-    private final RoomState roomState;
+    private RoomState roomState;
 
     /// The cleanable. Cleans the room when the room has become phantom reachable.
-    private final Cleaner.Cleanable cleanable;
+    private Cleaner.Cleanable cleanable;
 
-    /// The constructor.
+    /// The default constructor.
+    public Room() {
+        super();
+    }
+
+    /// The setup method invoked after
+    /// Spring returns a new bean.
     ///
     /// @param   name               java.lang.String
     /// @param   numberOfJunkPiles  int
-    /// @param   resourceCleaner    net.jmp.spring.boot.cleaners.components.ResourceCleaner
-    public Room(final String name, final int numberOfJunkPiles, final ResourceCleaner resourceCleaner) {
+    /// @since                      0.2.0
+    public void setup(final String name, final int numberOfJunkPiles) {
         this.roomState = new RoomState(name, numberOfJunkPiles);
-        this.cleanable = resourceCleaner.getCleaner().register(this, this.roomState);
+        this.cleanable = this.resourceCleaner.getCleaner().register(this, this.roomState);
     }
 
     /// Return the number of junk piles.

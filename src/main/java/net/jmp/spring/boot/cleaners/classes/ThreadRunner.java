@@ -40,6 +40,8 @@ import static net.jmp.util.logging.LoggerUtils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 /// The thread runner class.
 ///
 /// @version    0.2.0
@@ -95,18 +97,32 @@ public final class ThreadRunner implements AutoCloseable {
         }
     }
 
+    /// The resource cleaner.
+    @Autowired
+    private ResourceCleaner resourceCleaner;
+
     /// The state.
-    private final State state;
+    private State state;
 
     /// The cleanable. Cleans up when the thread runner has become phantom reachable.
-    private final Cleaner.Cleanable cleanable;
+    private Cleaner.Cleanable cleanable;
 
-    /// The constructor.
+    /// The default constructor.
+    public ThreadRunner() {
+        super();
+    }
+
+    /// Sets up the thread runner.
     ///
-    /// @param  resourceCleaner net.jmp.spring.boot.cleaners.components.ResourceCleaner
-    public ThreadRunner(final ResourceCleaner resourceCleaner) {
+    /// The setup method is invoked after the ThreadRunner instance is created.
+    /// It creates a new executor service and registers it with the resource
+    /// cleaner. The resource cleaner will close the executor service if it
+    /// becomes phantom reachable.
+    ///
+    /// @since      0.2.0
+    public void setup() {
         this.state = new State(Executors.newFixedThreadPool(DEFAULT_NUMBER_OF_THREADS));
-        this.cleanable = resourceCleaner.getCleaner().register(this, this.state);
+        this.cleanable = this.resourceCleaner.getCleaner().register(this, this.state);
     }
 
     /// Runs threads.
