@@ -47,6 +47,9 @@ import org.springframework.stereotype.Service;
 /// @since      0.1.0
 @Service
 public class RoomService implements ServiceRunner {
+    /// The message text when logging a room.
+    private static final String ROOM_MESSAGE_TEXT = "{}'s room has {} junk piles in it";
+
     /// The logger.
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
@@ -75,7 +78,7 @@ public class RoomService implements ServiceRunner {
             myRoom.setup("Jonathan", 2);
 
             if (this.logger.isInfoEnabled()) {
-                this.logger.info("{}'s room has {} junk piles in it", myRoom.getName(), myRoom.getNumberOfJunkPiles());
+                this.logger.info(ROOM_MESSAGE_TEXT, myRoom.getName(), myRoom.getNumberOfJunkPiles());
             }
         }
 
@@ -86,7 +89,7 @@ public class RoomService implements ServiceRunner {
         garage.setup("Garage", 12);
 
         if (this.logger.isInfoEnabled()) {
-            this.logger.info("{}'s room has {} junk piles in it", garage.getName(), garage.getNumberOfJunkPiles());
+            this.logger.info(ROOM_MESSAGE_TEXT, garage.getName(), garage.getNumberOfJunkPiles());
         }
 
         garage.close();
@@ -98,7 +101,7 @@ public class RoomService implements ServiceRunner {
         herRoom.setup("Dena", 5);
 
         if (this.logger.isInfoEnabled()) {
-            this.logger.info("{}'s room has {} junk piles in it", herRoom.getName(), herRoom.getNumberOfJunkPiles());
+            this.logger.info(ROOM_MESSAGE_TEXT, herRoom.getName(), herRoom.getNumberOfJunkPiles());
         }
 
         herRoom = null; // Abandon the reference in anticipation of garbage collection

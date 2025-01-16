@@ -47,7 +47,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public final class Room implements AutoCloseable{
     /// The resource(s) that require cleanup.
     /// This state class must never refer to Room.
-    private static class RoomState implements Runnable {
+    private static class State implements Runnable {
         /// The logger.
         private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
@@ -61,7 +61,7 @@ public final class Room implements AutoCloseable{
         ///
         /// @param  name                java.lang.String
         /// @param  numberOfJunkPiles   int
-        private RoomState(final String name, final int numberOfJunkPiles) {
+        private State(final String name, final int numberOfJunkPiles) {
             this.name = name;
             this.numberOfJunkPiles = numberOfJunkPiles;
         }
@@ -93,7 +93,7 @@ public final class Room implements AutoCloseable{
     private ResourceCleaner resourceCleaner;
 
     /// The state of the room that requires cleanup.
-    private RoomState roomState;
+    private State state;
 
     /// The cleanable. Cleans the room when the room has become phantom reachable.
     private Cleaner.Cleanable cleanable;
@@ -110,22 +110,22 @@ public final class Room implements AutoCloseable{
     /// @param   numberOfJunkPiles  int
     /// @since                      0.2.0
     public void setup(final String name, final int numberOfJunkPiles) {
-        this.roomState = new RoomState(name, numberOfJunkPiles);
-        this.cleanable = this.resourceCleaner.getCleaner().register(this, this.roomState);
+        this.state = new State(name, numberOfJunkPiles);
+        this.cleanable = this.resourceCleaner.getCleaner().register(this, this.state);
     }
 
     /// Return the number of junk piles.
     ///
     /// @return int
     public int getNumberOfJunkPiles() {
-        return this.roomState.numberOfJunkPiles;
+        return this.state.numberOfJunkPiles;
     }
 
     /// Return the name of the room.
     ///
     /// @return java.lang.String
     public String getName() {
-        return this.roomState.name;
+        return this.state.name;
     }
 
     /// The close method.
