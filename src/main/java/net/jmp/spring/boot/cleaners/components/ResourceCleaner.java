@@ -1,8 +1,7 @@
-package net.jmp.spring.boot.cleaners;
+package net.jmp.spring.boot.cleaners.components;
 
 /*
- * (#)BootstrapSpring.java	0.2.0   01/16/2025
- * (#)BootstrapSpring.java	0.1.0   01/15/2025
+ * (#)ResourceCleaner.java  0.2.0   01/16/2025
  *
  * @author    Jonathan Parker
  *
@@ -29,30 +28,30 @@ package net.jmp.spring.boot.cleaners;
  * SOFTWARE.
  */
 
-import org.springframework.boot.SpringApplication;
+import org.springframework.stereotype.Component;
 
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import java.lang.ref.Cleaner;
 
-import org.springframework.context.annotation.ComponentScan;
-
-/// The bootstrap Spring Boot application class.
+/// The resource cleaner.
 ///
-/// @version    0.2.0
-/// @since      0.1.0
-@SpringBootApplication
-@ComponentScan({ "net.jmp.spring.boot.cleaners", "net.jmp.spring.boot.cleaners.components" })
-public class BootstrapSpring {
+/// @version 0.2.0
+/// @since   0.2.0
+@Component
+public class ResourceCleaner {
+    /// The cleaner.
+    private final Cleaner cleaner;
+
     /// The default constructor.
-    public BootstrapSpring() {
+    public ResourceCleaner() {
         super();
+
+        this.cleaner = Cleaner.create();
     }
 
+    /// Retrieves the cleaner object.
     ///
-    /// This calls {@link SpringApplication#run(Class, String[])}
-    /// to start the application.
-    ///
-    /// @param	args	java.lang.String[]
-    public static void main(final String[] args) {
-        SpringApplication.run(BootstrapSpring.class, args);
+    /// @return java.lang.ref.Cleaner
+    public Cleaner getCleaner() {
+        return this.cleaner;
     }
 }

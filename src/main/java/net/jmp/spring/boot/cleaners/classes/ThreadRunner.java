@@ -29,8 +29,11 @@ package net.jmp.spring.boot.cleaners.classes;
  */
 
 import java.lang.ref.Cleaner;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import net.jmp.spring.boot.cleaners.components.ResourceCleaner;
 
 import static net.jmp.util.logging.LoggerUtils.*;
 
@@ -47,9 +50,6 @@ public final class ThreadRunner implements AutoCloseable {
 
     /// The logger.
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
-
-    /// The cleaner. One cleaner can manage multiple items.
-    private static final Cleaner cleaner = Cleaner.create();
 
     /// The resource(s) that require cleanup.
     /// This state class must never refer to ThreadRunner.
@@ -101,10 +101,12 @@ public final class ThreadRunner implements AutoCloseable {
     /// The cleanable. Cleans up when the thread runner has become phantom reachable.
     private final Cleaner.Cleanable cleanable;
 
-    /// The default constructor.
-    public ThreadRunner() {
+    /// The constructor.
+    ///
+    /// @param  resourceCleaner net.jmp.spring.boot.cleaners.components.ResourceCleaner
+    public ThreadRunner(final ResourceCleaner resourceCleaner) {
         this.state = new State(Executors.newFixedThreadPool(DEFAULT_NUMBER_OF_THREADS));
-        this.cleanable = cleaner.register(this, this.state);
+        this.cleanable = resourceCleaner.getCleaner().register(this, this.state);
     }
 
     /// Runs threads.

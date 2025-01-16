@@ -30,6 +30,8 @@ package net.jmp.spring.boot.cleaners.services;
 
 import net.jmp.spring.boot.cleaners.classes.ThreadRunner;
 
+import net.jmp.spring.boot.cleaners.components.ResourceCleaner;
+
 import static net.jmp.util.logging.LoggerUtils.*;
 
 import org.slf4j.Logger;
@@ -37,7 +39,9 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.stereotype.Service;
 
-/// The thread service.
+/// The thread service. Since auto-wiring only works on Spring managed
+/// objects, and ThreadRunner is not a Spring managed object, we need
+/// to pass it in as an argument on the constructor.
 ///
 /// @version    0.2.0
 /// @since      0.2.0
@@ -46,9 +50,16 @@ public class ThreadRunnerService implements ServiceRunner {
     /// The logger.
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-    /// The default constructor.
-    public ThreadRunnerService() {
+    /// The resource cleaner component.
+    private final ResourceCleaner resourceCleaner;
+
+    /// The constructor.
+    ///
+    /// @param  resourceCleaner net.jmp.spring.boot.cleaners.components.ResourceCleaner
+    public ThreadRunnerService(final ResourceCleaner resourceCleaner) {
         super();
+
+        this.resourceCleaner = resourceCleaner;
     }
 
     /// Runs the service.
@@ -60,7 +71,7 @@ public class ThreadRunnerService implements ServiceRunner {
 
         // No explicit or implicit close
 
-        ThreadRunner threadRunner1 = new ThreadRunner();
+        ThreadRunner threadRunner1 = new ThreadRunner(this.resourceCleaner);
 
         threadRunner1.runThreads();
 
@@ -70,14 +81,14 @@ public class ThreadRunnerService implements ServiceRunner {
 
         // Use an explicit close
 
-        final ThreadRunner threadRunner2 = new ThreadRunner();
+        final ThreadRunner threadRunner2 = new ThreadRunner(this.resourceCleaner);
 
         threadRunner2.runThreads();
         threadRunner2.close();
 
         // Use an implicit close
 
-        try (final ThreadRunner threadRunner3 = new ThreadRunner()) {
+        try (final ThreadRunner threadRunner3 = new ThreadRunner(this.resourceCleaner)) {
             threadRunner3.runThreads();
         }
 

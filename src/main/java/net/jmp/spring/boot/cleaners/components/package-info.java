@@ -1,10 +1,7 @@
-package net.jmp.spring.boot.cleaners;
-
 /*
- * (#)BootstrapSpring.java	0.2.0   01/16/2025
- * (#)BootstrapSpring.java	0.1.0   01/15/2025
+ * (#)package-info.java 0.2.0   01/16/2025
  *
- * @author    Jonathan Parker
+ * @author   Jonathan Parker
  *
  * MIT License
  *
@@ -29,30 +26,8 @@ package net.jmp.spring.boot.cleaners;
  * SOFTWARE.
  */
 
-import org.springframework.boot.SpringApplication;
-
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import org.springframework.context.annotation.ComponentScan;
-
-/// The bootstrap Spring Boot application class.
+/// The package that contains Spring components.
 ///
 /// @version    0.2.0
-/// @since      0.1.0
-@SpringBootApplication
-@ComponentScan({ "net.jmp.spring.boot.cleaners", "net.jmp.spring.boot.cleaners.components" })
-public class BootstrapSpring {
-    /// The default constructor.
-    public BootstrapSpring() {
-        super();
-    }
-
-    ///
-    /// This calls {@link SpringApplication#run(Class, String[])}
-    /// to start the application.
-    ///
-    /// @param	args	java.lang.String[]
-    public static void main(final String[] args) {
-        SpringApplication.run(BootstrapSpring.class, args);
-    }
-}
+/// @since      0.2.0
+package net.jmp.spring.boot.cleaners.components;

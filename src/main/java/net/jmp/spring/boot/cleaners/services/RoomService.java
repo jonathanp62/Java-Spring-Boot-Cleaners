@@ -30,6 +30,8 @@ package net.jmp.spring.boot.cleaners.services;
 
 import net.jmp.spring.boot.cleaners.classes.Room;
 
+import net.jmp.spring.boot.cleaners.components.ResourceCleaner;
+
 import static net.jmp.util.logging.LoggerUtils.*;
 
 import org.slf4j.Logger;
@@ -37,7 +39,9 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.stereotype.Service;
 
-/// The room service.
+/// The room service. Since auto-wiring only works on Spring managed
+/// objects, and Room is not a Spring managed object, we need to pass
+/// it in as an argument on the constructor.
 ///
 /// @version    0.1.0
 /// @since      0.1.0
@@ -46,9 +50,16 @@ public class RoomService implements ServiceRunner {
     /// The logger.
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-    /// The default constructor.
-    public RoomService() {
+    /// The resource cleaner component.
+    private final ResourceCleaner resourceCleaner;
+
+    /// The constructor.
+    ///
+    /// @param  resourceCleaner net.jmp.spring.boot.cleaners.components.ResourceCleaner
+    public RoomService(final ResourceCleaner resourceCleaner) {
         super();
+
+        this.resourceCleaner = resourceCleaner;
     }
 
     /// Runs the service.
@@ -60,7 +71,7 @@ public class RoomService implements ServiceRunner {
 
         // The try-with-resources invokes the close method on Room
 
-        try (final Room myRoom = new Room("Jonathan", 2)) {
+        try (final Room myRoom = new Room("Jonathan", 2, this.resourceCleaner)) {
             if (this.logger.isInfoEnabled()) {
                 this.logger.info("{}'s room has {} junk piles in it", myRoom.getName(), myRoom.getNumberOfJunkPiles());
             }
@@ -68,7 +79,7 @@ public class RoomService implements ServiceRunner {
 
         // Using an explicit close
 
-        final Room garage = new Room("Garage", 12);
+        final Room garage = new Room("Garage", 12, this.resourceCleaner);
 
         if (this.logger.isInfoEnabled()) {
             this.logger.info("{}'s room has {} junk piles in it", garage.getName(), garage.getNumberOfJunkPiles());
@@ -78,7 +89,7 @@ public class RoomService implements ServiceRunner {
 
         // Not using try-with-resources or an explicit close
 
-        Room herRoom = new Room("Dena", 5);
+        Room herRoom = new Room("Dena", 5, this.resourceCleaner);
 
         if (this.logger.isInfoEnabled()) {
             this.logger.info("{}'s room has {} junk piles in it", herRoom.getName(), herRoom.getNumberOfJunkPiles());

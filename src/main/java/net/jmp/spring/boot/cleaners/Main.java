@@ -83,7 +83,9 @@ public class Main implements Runnable {
         }
 
         if (this.logger.isInfoEnabled()) {
-            this.logger.info("Hello from: {}", this.environment.getProperty("spring.application.name"));
+            this.logger.info("Hello from: {}:{}",
+                    this.environment.getProperty("spring.application.name"),
+                    this.environment.getProperty("spring.application.version"));
         }
 
         this.roomService.runService();

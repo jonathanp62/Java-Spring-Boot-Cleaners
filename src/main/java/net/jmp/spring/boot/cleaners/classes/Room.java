@@ -31,6 +31,8 @@ package net.jmp.spring.boot.cleaners.classes;
 
 import java.lang.ref.Cleaner;
 
+import net.jmp.spring.boot.cleaners.components.ResourceCleaner;
+
 import static net.jmp.util.logging.LoggerUtils.*;
 
 import org.slf4j.Logger;
@@ -41,9 +43,6 @@ import org.slf4j.LoggerFactory;
 /// @version    0.2.0
 /// @since      0.1.0
 public final class Room implements AutoCloseable{
-    /// The cleaner. One cleaner can manage multiple items.
-    private static final Cleaner cleaner = Cleaner.create();
-
     /// The resource(s) that require cleanup.
     /// This state class must never refer to Room.
     private static class RoomState implements Runnable {
@@ -97,9 +96,10 @@ public final class Room implements AutoCloseable{
     ///
     /// @param   name               java.lang.String
     /// @param   numberOfJunkPiles  int
-    public Room(final String name, final int numberOfJunkPiles) {
+    /// @param   resourceCleaner    net.jmp.spring.boot.cleaners.components.ResourceCleaner
+    public Room(final String name, final int numberOfJunkPiles, final ResourceCleaner resourceCleaner) {
         this.roomState = new RoomState(name, numberOfJunkPiles);
-        this.cleanable = cleaner.register(this, this.roomState);
+        this.cleanable = resourceCleaner.getCleaner().register(this, this.roomState);
     }
 
     /// Return the number of junk piles.
