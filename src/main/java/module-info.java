@@ -40,9 +40,10 @@ module Spring.Boot.Cleaners.main {
     requires spring.core;
 
     opens net.jmp.spring.boot.cleaners to spring.core;
+    opens net.jmp.spring.boot.cleaners.classes to spring.core;
     opens net.jmp.spring.boot.cleaners.components to spring.core;
 
-    exports net.jmp.spring.boot.cleaners to spring.beans;
+    exports net.jmp.spring.boot.cleaners to spring.beans, spring.context;
     exports net.jmp.spring.boot.cleaners.components to spring.beans;
-    exports net.jmp.spring.boot.cleaners.services to spring.core;
+    exports net.jmp.spring.boot.cleaners.services to spring.beans, spring.core;
 }
